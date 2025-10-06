@@ -1,25 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // Default URL for triggering event grid function in the local environment.
 // http://localhost:7071/runtime/webhooks/EventGrid?functionName={functionname}
 using System;
@@ -33,8 +11,9 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using System.Net.Http;
 using Azure;
+using System.Threading.Tasks;
 
-namespace azuretwin
+namespace FunctionApp1
 {
     public class IoTHubtoTwins
     {
@@ -42,12 +21,13 @@ namespace azuretwin
         private static readonly HttpClient httpClient = new HttpClient();
 
         [FunctionName("IoTHubtoTwins")]
-        // While async void should generally be used with caution, it's not uncommon for Azure function apps, since the function app isn't awaiting the task.
-#pragma warning disable AZF0001 // Suppress async void error
-        public async void Run([EventGridTrigger] EventGridEvent eventGridEvent, ILogger log)
-#pragma warning restore AZF0001 // Suppress async void error
+        public async Task Run([EventGridTrigger] EventGridEvent eventGridEvent, ILogger log) // Changed from async void to async Task
         {
-            if (adtInstanceUrl == null) log.LogError("Application setting \"ADT_SERVICE_URL\" not set");
+            if (adtInstanceUrl == null)
+            {
+                log.LogError("Application setting \"ADT_SERVICE_URL\" not set");
+                return;
+            }
 
             try
             {
@@ -75,10 +55,6 @@ namespace azuretwin
                     var EnergyConsumed = deviceMessage["body"]["EnergyConsumed"];
                     var Temperature = deviceMessage["body"]["Temperature"];
                     var NoiseLevel = deviceMessage["body"]["NoiseLevel"];
-
-
-                   
-                    // </Find_device_ID_and_temperature>
 
                     log.LogInformation($"Device:{deviceId}  MotorId is:{MotorId} MotorSpeed:{MotorSpeed}  AirCleanerId:{AirCleanerId} TankId:{TankId} Pressure:{Pressure} waterOutletValvePressure:{waterOutletValvePressure} PumpId {PumpId} Vibration{Vibration} OilCoolerId{OilCoolerId} EnergyConsumed{EnergyConsumed} Temperature{Temperature} NoiseLevel{NoiseLevel}");
 
