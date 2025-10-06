@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "neural_twin": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7114",
+      "launchBrowser": false
+    }
+  }
+}
